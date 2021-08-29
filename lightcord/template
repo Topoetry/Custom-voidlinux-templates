@@ -1,0 +1,43 @@
+# Template file for 'lightcord'
+pkgname=lightcord
+version=0.1.9
+revision=1
+#archs="i686 x86_64"
+hostmakedepends="pnpm nvm"
+makedepends="pnpm nvm"
+_nodeversion='12'
+short_desc="A simple - customizable - Discord Client"
+maintainer="Topoetry <leosl@free.fr>"
+license="MIT"
+homepage="https://github.com/Lightcord/Lightcord"
+distfiles="https://codeload.github.com/Lightcord/Lightcord/tar.gz/refs/tags/v${version}>v${version}.tar.gz"
+_logo="https://raw.githubusercontent.com/Lightcord/LightcordLogos/master/lightcord/lightcord.png"
+create_wrksrc=yes
+checksum="67b839289338ae8ea9bd15bd05b1bb58051913b2a18eb5d2ebcebfdb831b911d"
+_logcksm="27f7abb09a61deff3a4d6944f1dab4ab3f6ada35767e586fad0a195fab35e0b9"
+
+do_build() {
+	source /usr/share/nvm/init-nvm.sh
+    nvm install -s "${_nodeversion}" && nvm use "${_nodeversion}"
+    npm run devInstall
+    npm run build
+}
+do_install() {
+	# Create the folder structure
+    vmkdir "$pkgdir"/opt/"${pkgname}"
+    vmkdir "$pkgdir"/usr/share/pixmaps
+    vmkdir "$pkgdir"/usr/bin
+	
+	# Copy files over and set rights
+    for i in $(ls builds/linux-unpacked); do vcopy builds/linux-unpacked/$i opt/"${pkgname}"; done
+    vcopy "lightcord.png" opt/"${pkgname}"
+	vinstall builds/linux-unpacked/lightcord 755 opt/"${pkgname}" 
+
+    # Link icon and add Desktop
+    vcopy lightcord.png usr/share/pixmaps/
+    vinstall  "$FILESDIR"/Lightcord.desktop 644 usr/share/applications
+    vlicense LICENSE
+
+    # Create symlink
+    ln -s /opt/"${pkgname}"/lightcord "$pkgdir"/usr/bin/"${pkgname}"
+}

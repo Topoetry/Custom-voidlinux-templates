@@ -1,0 +1,42 @@
+# Template file for 'nvm'
+pkgname=nvm
+version=0.38.0
+revision=1
+#archs="i686 x86_64"
+#wrksrc=
+#create_wrksrc=yes
+#build_style=gnu-configure
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends=""
+makedepends=""
+depends=""
+short_desc="Node Version Manager - Simple bash script to manage multiple active node.js versions"
+maintainer="Topoetry <leosl@free.fr>"
+license="MIT"
+homepage="https://github.com/nvm-sh/nvm"
+distfiles="https://github.com/nvm-sh/nvm/archive/v${version}.tar.gz"
+checksum=35bb7bc74bf9efacde270ee5f52ef3c41fd585c5f8ddd57ca6e8e07e4f29fc74
+
+do_install() {
+# convenience script
+  vinstall "$FILESDIR"/init-nvm.sh 644 usr/share/"${pkgname}"
+
+  # companion script which installs symlinks in NVM_DIR (see comment in script)
+  vinstall  "$FILESDIR"/install-nvm-exec 644 usr/share/"${pkgname}"
+
+  # nvm itself
+  vinstall nvm.sh 644 /usr/share/"${pkgname}"
+
+  # nvm-exec script for 'nvm exec' command
+  vinstall nvm-exec 755 usr/share/"${pkgname}"
+
+  # bash completion
+  vinstall bash_completion 644 usr/share/"${pkgname}"
+
+  # license
+  vlicense LICENSE.md 
+}

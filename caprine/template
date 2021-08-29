@@ -1,0 +1,37 @@
+# Template file for 'caprine'
+pkgname=caprine
+version=2.54.1
+revision=1
+hostmakedepends="curl pnpm"
+#for now electron is broken (for me) on musl
+archs="~*-musl"
+depends="electron12"
+short_desc="Elegant Facebook Messenger desktop app"
+maintainer="Topoetry <leosl@free.fr>"
+license="MIT"
+homepage="https://github.com/sindresorhus/caprine"
+distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
+checksum=8e982c22bd91eb8a563c991335cb3615478800541dcae3a8267ecc5c23ff7421
+
+do_fetch() {
+	curl -O "${distfiles}"
+	mv v"${version}.tar.gz" "${wrksrc}"
+}
+do_build() {
+	npm install --ignore-scripts
+	npx tsc
+	rm -r node_modules
+	npm install --ignore-scripts --production
+}
+
+do_install() {
+	vmkdir usr/lib/"${pkgname}"
+	vmkdir usr/share/pixmaps
+	vmkdir usr/share/applications
+	for fila in "$(ls -x)"; do cp -ra $fila ${PKGDESTDIR}/usr/lib/"${pkgname}"; done
+	vinstall build/icon.png 644 usr/share/pixmaps "${pkgname}".png
+	vbin "$FILESDIR"/"${pkgname}".js "${pkgname}"
+	vinstall "$FILESDIR"/"${pkgname}".desktop 644 usr/share/applications
+	vlicense license
+	rm -r "$PKGDESTDIR"/usr/lib/"${pkgname}"/{build,source,tsconfig.json}
+}
