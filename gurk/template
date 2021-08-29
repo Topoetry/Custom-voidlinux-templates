@@ -1,0 +1,22 @@
+# Template file for 'gurk'
+pkgname=gurk
+version=0.2.1
+revision=1
+#archs="i686 x86_64"
+#wrksrc=
+#create_wrksrc=yes
+build_style=cargo
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="cargo"
+makedepends=""
+depends=""
+short_desc="Signal Messenger client for terminal"
+maintainer="Topoetry <leosl@free.fr>"
+license="GPL-3.0-or-later"
+homepage="https://github.com/boxdot/gurk-rs"
+distfiles="https://codeload.github.com/boxdot/gurk-rs/tar.gz/refs/tags/v${version}>v${version}.tar.gz"
+checksum=badbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadb
