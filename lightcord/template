@@ -3,8 +3,8 @@ pkgname=lightcord
 version=0.1.9
 revision=1
 #archs="i686 x86_64"
-hostmakedepends="pnpm nvm"
-makedepends="pnpm nvm"
+hostmakedepends="pnpm nvm git curl python tar nodejs"
+makedepends="pnpm nvm git curl python tar nodejs"
 _nodeversion='12'
 short_desc="A simple - customizable - Discord Client"
 maintainer="Topoetry <leosl@free.fr>"
@@ -12,9 +12,9 @@ license="MIT"
 homepage="https://github.com/Lightcord/Lightcord"
 distfiles="https://codeload.github.com/Lightcord/Lightcord/tar.gz/refs/tags/v${version}>v${version}.tar.gz"
 _logo="https://raw.githubusercontent.com/Lightcord/LightcordLogos/master/lightcord/lightcord.png"
-create_wrksrc=yes
 checksum="67b839289338ae8ea9bd15bd05b1bb58051913b2a18eb5d2ebcebfdb831b911d"
 _logcksm="27f7abb09a61deff3a4d6944f1dab4ab3f6ada35767e586fad0a195fab35e0b9"
+wrksrc="Lightcord-${version}"
 
 do_build() {
 	source /usr/share/nvm/init-nvm.sh
