@@ -1,11 +1,11 @@
 # Template file for 'caprine'
 pkgname=caprine
 version=2.54.1
-revision=1
+revision=3
 hostmakedepends="pnpm"
 #for now electron is broken (for me) on musl
-archs="~*-musl"
-depends="electron12"
+#archs="~*-musl"
+depends="electron13"
 short_desc="Elegant Facebook Messenger desktop app"
 maintainer="Topoetry <leosl@free.fr>"
 license="MIT"
