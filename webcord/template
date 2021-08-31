@@ -1,0 +1,119 @@
+# Template file for 'webcord'
+pkgname=webcord
+version=1.6.1
+revision=1
+#archs="i686 x86_64"
+wrksrc=WebCord-"${version}"
+#create_wrksrc=yes
+#build_style=gnu-configure
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="electron13 pnpm git"
+makedepends=""
+depends="electron13"
+short_desc="A Discord web client made with :electron: Electron API"
+maintainer="Topoetry <leosl@free.fr>"
+license="MIT"
+homepage="https://github.com/SpacingBat3/WebCord"
+distfiles="https://github.com/SpacingBat3/WebCord/archive/refs/tags/v${version}.tar.gz"
+checksum=d605c11b1b6de6a632656e1d6b103e2826eb436fac38237de774b02d43febce2
+_make_sources_ready() {
+    _print() {
+        printf "\r%-${1}s" "${2}"
+    }
+
+    _icons=("${srcdir}/${pkgname%-git}/sources/assets/icons/app.png")
+    _terminal() {
+        printf "#!/bin/bash\nelectron /usr/lib/${pkgname%-git}.asar\nexit \$?">"$1"
+    }
+    cd "${srcdir}/${pkgname%-git}"
+
+    # Clean workspace and remove unnecesary files:
+
+    _echo_times "Clean-up workspace..."
+
+    _PACKAGE_IGNORE=("../${pkgname%-git}.asar" "../iconThemes" "sources/assets/icons/app.ico"
+                    "sources/assets/icons/app.icns" "sources/app/configForge.js" "sources/code/configForge.ts"
+                    ".gitignore" ".eslintrc.json" "../docs" "build" ".github" "../extra")
+
+    for _target in "${_PACKAGE_IGNORE[@]}"; do
+        if [[ -f "${_target}" ]]; then
+            rm "${_target}"
+        elif [[ -d "${_target}" ]]; then
+            rm -R "${_target}"
+        fi
+    done
+
+    # Move documentation files, and license outside sources
+    [[ -f LICENSE ]] && mv LICENSE ../COPYING
+    [[ -d docs ]] && mv docs ../docs
+
+    # Temporarily move '.git' outside the sources (if exists)
+    [[ -d .git ]] && mv .git ../git-data
+
+    # Compile TypeScript to JavaScript
+    _echo_times "Compiling TypeScript to Javascript..."
+    tsc || { echo "Failed to compile TypeScript sources to JavaScript"; exit 1; }
+
+    # Cleanup – reinstall dependencies
+    _echo_times "Removing build dependencies..."
+    npm uninstall --save-prod --only=prod "${_remove[@]}"
+    rmdir node_modules/* --ignore-fail-on-non-empty
+
+    # Package to ASAR
+    _echo_times "Packaging app to ASAR archive..."
+    npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 2; }
+
+    _terminal "../${pkgname%-git}.sh"
+
+    [[ -d ../git-data ]] && mv ../git-data .git
+
+    # Generate icons:
+
+    mkdir "../iconThemes"
+    cd "../iconThemes"
+    _sizes=(512 256 128 96 64 48 32 24 22 18 16 8)
+    _i=1
+    mkdir "themeId-${_i}"
+    _echo_times "Generating icons in different sizes..."
+    for _file in "${_icons[@]}"; do
+        [[ $(file "${_file}") =~ "PNG" ]] && _ext="png"
+        for _size in "${_sizes[@]}"; do
+            [[ ! -z "${_msg}" ]] && _old_msg="${#_msg}" || _old_msg=0
+            _msg="Generating images: F=`basename "${_file}"`; S=${_size}x${_size}"
+            _print "${_old_msg}" "${_msg}"
+            _out="themeId-${_i}/${_size}x${_size}/apps/${pkgname%-git}.${_ext}"
+            mkdir -p "$(dirname "$_out")"
+            if [[ "${_ext}" == "png" ]]; then
+                convert "$_file" -size "${_size}x${_size}" "$_out"
+            else
+                echo -e "\nERROR: Unknown image type!"
+                exit 3
+            fi
+        done
+        let _i++
+    done
+    _print "${#_msg}" && printf '\r'
+}
+
+do_build() {
+	_types=('@types/node' '@types/source-map-support'
+            "electron@`{ electron -v | cut -c 2-; } || printf "latest"`")
+	npm install --save-prod --only=prod "${_types[@]}"
+	_make_sources_ready
+}
+do_install() {
+	vinstall "${pkgname}".asar 755 usr/lib/"${pkgname}".asar
+	vbin "${pkgname}".sh "${pkgname}"
+	vinstall "$FILESDIR"/"${pkgname}".desktop 755 usr/share/applications
+	vlicense COPYING
+	vmkdir usr/share/icons 755
+	vcopy iconThemes/themeId-1/ /usr/share/icons/hicolor
+	chmod 0644 "${PKGDESTDIR}/usr/share/icons"/*/*/*/"${pkgname}."*
+	vmkdir usr/share/docs 755
+    vcopy docs/ usr/share/docs/"${pkgname}"/
+    chmod 0644 "${PKGDESTDIR}"/usr/share/docs/${pkgname}/
+}
