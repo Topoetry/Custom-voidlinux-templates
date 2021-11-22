@@ -18,4 +18,5 @@ do_install() {
 	vinstall target/release/libspotifyadblock.so 644 usr/lib "${pkgname}".so
 	vinstall config.toml 644 /etc/"${pkgname}"/
 	vinstall ${FILESDIR}/spotify-adblock.desktop 644 usr/share/applications/
+	vlicense LICENSE
 }
