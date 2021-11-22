@@ -20,22 +20,32 @@ license="MIT"
 homepage="https://github.com/SpacingBat3/WebCord"
 distfiles="https://github.com/SpacingBat3/WebCord/archive/refs/tags/v${version}.tar.gz"
 checksum=d605c11b1b6de6a632656e1d6b103e2826eb436fac38237de774b02d43febce2
+
+_repo="WebCord"
+_author="SpacingBat3"
+_TIMES='1'
+_TIMES_MAX='6'
+
+_echo_times() {
+    echo "(${_TIMES}/${_TIMES_MAX})" "${@}"
+    let _TIMES++
+}
 _make_sources_ready() {
     _print() {
         printf "\r%-${1}s" "${2}"
     }
 
-    _icons=("${srcdir}/${pkgname%-git}/sources/assets/icons/app.png")
+    _icons=("${wrksrc}/sources/assets/icons/app.png")
     _terminal() {
-        printf "#!/bin/bash\nelectron /usr/lib/${pkgname%-git}.asar\nexit \$?">"$1"
+        printf "#!/bin/bash\nelectron /usr/lib/${pkgname}.asar\nexit \$?">"$1"
     }
-    cd "${srcdir}/${pkgname%-git}"
+    cd "${wrksrc}"
 
     # Clean workspace and remove unnecesary files:
 
     _echo_times "Clean-up workspace..."
 
-    _PACKAGE_IGNORE=("../${pkgname%-git}.asar" "../iconThemes" "sources/assets/icons/app.ico"
+    _PACKAGE_IGNORE=("../${pkgname}.asar" "../iconThemes" "sources/assets/icons/app.ico"
                     "sources/assets/icons/app.icns" "sources/app/configForge.js" "sources/code/configForge.ts"
                     ".gitignore" ".eslintrc.json" "../docs" "build" ".github" "../extra")
 
@@ -67,7 +77,7 @@ _make_sources_ready() {
     _echo_times "Packaging app to ASAR archive..."
     npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 2; }
 
-    _terminal "../${pkgname%-git}.sh"
+    _terminal "../${pkgname}.sh"
 
     [[ -d ../git-data ]] && mv ../git-data .git
 

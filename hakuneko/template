@@ -1,0 +1,32 @@
+# Template file for 'hakuneko'
+pkgname=hakuneko
+version=6.1.7
+revision=1
+archs="x86_64"
+#wrksrc=
+#create_wrksrc=yes
+build_style=fetch
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="bsdtar"
+makedepends=""
+depends="nss gtk+3"
+short_desc="Manga & Anime Downloader for Linux, Windows & MacOS"
+maintainer="Topoetry <leosl@free.fr>"
+license="MIT"
+homepage="https://github.com/manga-download/hakuneko"
+distfiles="https://github.com/manga-download/hakuneko/releases/download/v${version}/${pkgname}-desktop_${version}_linux_amd64.deb>${pkgname}-desktop_${version}_linux_amd64.tar.gz"
+checksum=06bb17d7a06bb0601053eaaf423f9176f06ff3636cc43ffc024438e1962dcd02
+
+do_build() {
+	bsdtar -xf "${pkgname}"-desktop_"${version}"_linux_amd64.tar.gz
+	bsdtar -xf data.tar.xz
+}
+do_install() {
+	vlicense usr/share/doc/"${pkgname}-desktop"/copyright
+	vcopy usr .
+	vbin "${FILESDIR}"/"${pkgname}".sh "${pkgname}"
+}

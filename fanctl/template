@@ -1,0 +1,41 @@
+# Template file for 'fanctl'
+pkgname=fanctl
+version=0.5.1
+revision=1
+#archs="i686 x86_64"
+wrksrc="${pkgname}-v${version}"
+#create_wrksrc=yes
+build_style=cargo
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="cargo curl bsdtar"
+makedepends=""
+depends="lm_sensors"
+short_desc="fanctl is a replacement for fancontrol from lm_sensors meant to have a more fine-grained control interface in its config file"
+maintainer="Topoetry <leosl@free.fr>"
+license="GPL-3.0-or-later"
+homepage="https://gitlab.com/mcoffin/fanctl"
+distfiles="https://gitlab.com/mcoffin/${pkgname}/-/archive/v${version}/${pkgname}-v${version}.tar.gz"
+checksum=ab5d80c75faf5f185720eb0a1e0fa0b46cf70297267b476577a8b15e809bc3ed5a403704bb447e50fd6300b04a00c63a312bf51fc2f758b295ab1d24933b866f
+do_fetch() {
+	curl "${distfiles}" -O 
+}
+do_extract() {
+	cd ..
+	bsdtar -xvf "${pkgname}-v${version}.tar.gz"
+}
+do_install() {
+	: ${make_cmd:=cargo}
+	: ${make_install_args:=--path .}
+
+	${make_cmd} install --target ${RUST_TARGET} --root="${DESTDIR}/usr" \
+		--locked ${configure_args} ${make_install_args}
+	vlicense COPYING
+	vsconf fanctl.yml fanctl.example.yml
+	vsv fanctl
+	rm -f "${DESTDIR}"/usr/.crates.toml
+	rm -f "${DESTDIR}"/usr/.crates2.json
+}

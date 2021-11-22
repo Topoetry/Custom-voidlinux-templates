@@ -1,0 +1,45 @@
+# Template file for 'cemu'
+pkgname=cemu
+version=1.25.6
+revision=1
+archs="x86_64"
+#wrksrc=
+create_wrksrc=yes
+#build_style=gnu-configure
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="bsdtar"
+makedepends=""
+depends="wine winetricks"
+short_desc="Wii U emulator (via wine). Includes the Cemuhook plugin"
+maintainer="Topoetry <leosl@free.fr>"
+license="GPL-3.0-or-later"
+homepage="https://cemu.info/"
+_cemuhookver=1251c_0575
+distfiles="https://cemu.info/releases/cemu_${version}.zip>cemu_${version}-${revision}.zip https://files.sshnuke.net/cemuhook_${_cemuhookver}.zip https://web.archive.org/web/20180907210517if_/https://files.sshnuke.net/sharedFonts.7z"
+checksum="46a7188e7b5b98ec608481ca3b9d9543dedd429ecf5e54ad30d19af26310412f dc8b138f61a9bb1d52d4227a46885ef8403e97df8eb100a384f77bcb57ecd586 d5f84cef406397a777f589d4c10b47dd7c0368f9739694a468cd48852e943c25"
+
+do_build() {
+	bsdtar -x -f ../cemuhook_"${_cemuhookver}".zip
+}
+
+do_install() {
+  	vmkdir usr/share/"${pkgname}" 755
+  	vbin "${FILESDIR}"/cemu.sh "${pkgname}"
+  	vmkdir usr/share/applications 755
+  	vmkdir usr/share/pixmaps 755
+  	vinstall "${FILESDIR}"/cemu.desktop 644 usr/share/applications
+  	vinstall "${FILESDIR}"/cemu.xpm 644 usr/share/pixmaps
+  	vcopy "${FILESDIR}"/sharedFonts usr/share/"${pkgname}"
+  	vinstall Cemu.exe 644 usr/share/"${pkgname}"
+  	vinstall  cemuhook.dll 644 usr/share/"${pkgname}"
+  	vinstall  keystone.dll 644 usr/share/"${pkgname}"
+  	vcopy gameProfiles usr/share/"${pkgname}"
+  	vmkdir usr/share/"${pkgname}"/mlc01
+  	vcopy shaderCache usr/share/"${pkgname}"
+  	find "${DESTDIR}"/usr/share/"${pkgname}" -type f -exec chmod 644 {} \;
+  	find "${DESTDIR}"/usr/share/"${pkgname}" -type d -exec chmod 755 {} \;
+}

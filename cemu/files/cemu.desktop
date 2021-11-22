@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.25.6
+Type=Application
+Name=Cemu
+Comment=Wii U emulator
+Exec=cemu
+Encoding=UTF-8
+Icon=cemu
+Categories=Game;
+Terminal=false
+StartupNotify=true
+StartupWMClass=cemu.exe

@@ -1,0 +1,45 @@
+# Template file for 'soundux'
+pkgname=soundux
+version=0.2.7
+revision=1
+#archs="i686 x86_64"
+wrksrc=Soundux
+#create_wrksrc=yes
+#build_style=gnu-configure
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+makedepends=""
+hostmakedepends="cmake ninja pkg-config pipewire-devel  pulseaudio-devel libX11-devel libwnck-devel gtk+3-devel webkit2gtk-devel libappindicator-devel libdwarf-devel openssl-devel"
+depends="pulseaudio webkit2gtk libwnck libappindicator base-files"
+short_desc="A cross-platform soundboard - stable version"
+maintainer="Topoetry <leosl@free.fr>"
+license="GPL-3.0"
+homepage="python3-readability-lxml"
+distfiles="https://github.com/Soundux/Soundux/releases/download/${version}/soundux-${version}.tar.gz"
+checksum=017003fc96f49df30575975f3904c0d8a500e325a9d2bca8c3dc69fed0cab0a7
+
+do_build() {
+	mkdir -p build
+	cd build
+	cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
+  	ninja
+}
+
+do_install() {
+	cd build
+	DESTDIR="${DESTDIR}" ninja install
+	vmkdir usr/bin
+	ln -sf /opt/soundux/soundux "${DESTDIR}/usr/bin/soundux"
+	cd ..
+	vdoc README.md
+	vlicense LICENSE
+
+	#workaround to get it working without pulseaudio-devel as a dependency
+	#vmkdir usr/lib
+	#ln -s /usr/lib/libpulse.so{.0,}
+	#ln -s /usr/lib/libpulse-simple.so{.0,}
+	#ln -s /usr/lib/libpulse-mainloop-glib.so{.0,}
+}

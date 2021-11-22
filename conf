@@ -1,0 +1,9 @@
+XBPS_ALLOW_RESTRICTED=yes
+XBPS_CCACHE=yes
+XBPS_MAKEJOBS=5
+XBPS_CFLAGS="-march=btver2 -O2 -pipe -fno-plt -fexceptions \
+		-Wp,-D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security \
+		-fstack-clash-protection -fcf-protection"
+XBPS_CXXFLAGS="$CFLAGS -Wp,-D_GLIBCXX_ASSERTIONS"
+XBPS_LDFLAGS="-Wl, -O1,--sort-common,--as-needed,-z,relro,-z,now"
+XBPS_RUSTFLAGS="-C opt-level=2 -C target-cpu=native"

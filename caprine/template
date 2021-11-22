@@ -1,6 +1,6 @@
 # Template file for 'caprine'
 pkgname=caprine
-version=2.54.1
+version=2.55.0
 revision=3
 hostmakedepends="pnpm"
 #for now electron is broken (for me) on musl
@@ -11,7 +11,7 @@ maintainer="Topoetry <leosl@free.fr>"
 license="MIT"
 homepage="https://github.com/sindresorhus/caprine"
 distfiles="${homepage}/archive/refs/tags/v${version}.tar.gz"
-checksum=8e982c22bd91eb8a563c991335cb3615478800541dcae3a8267ecc5c23ff7421
+checksum=ceeba9f93783a0546dc2589676bf6c96b6116f512aa019adacce9632897ab821
 
 #do_fetch() {
 #	curl -O "${distfiles}"

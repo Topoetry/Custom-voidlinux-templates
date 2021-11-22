@@ -3,8 +3,8 @@ pkgname=lightcord
 version=0.1.9
 revision=1
 #archs="i686 x86_64"
-hostmakedepends="pnpm nvm git curl python tar nodejs"
-makedepends="pnpm nvm git curl python tar nodejs"
+hostmakedepends="pnpm nvm git curl python python3 tar nodejs icu-devel"
+makedepends="pnpm nvm git curl python python3 tar nodejs icu-devel"
 _nodeversion='12'
 short_desc="A simple - customizable - Discord Client"
 maintainer="Topoetry <leosl@free.fr>"
@@ -24,9 +24,9 @@ do_build() {
 }
 do_install() {
 	# Create the folder structure
-    vmkdir "$pkgdir"/opt/"${pkgname}"
-    vmkdir "$pkgdir"/usr/share/pixmaps
-    vmkdir "$pkgdir"/usr/bin
+    vmkdir opt/"${pkgname}"
+    vmkdir usr/share/pixmaps
+    vmkdir usr/bin
 	
 	# Copy files over and set rights
     for i in $(ls builds/linux-unpacked); do vcopy builds/linux-unpacked/$i opt/"${pkgname}"; done
